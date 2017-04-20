@@ -1,11 +1,12 @@
+package com.jpong.main;
+
 import java.awt.Color;
-import java.Graphics;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.Rectangle;
-import java.awt.Circle;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -13,7 +14,9 @@ import javax.swing.Timer;
 import javax.swing.JOptionPane;
 
 public class Pong extends JFrame {
-  private final static int WIDTH = 700, HEIGHT = 450;
+	private static final long serialVersionUID = 1L;
+	
+private final static int WIDTH = 700, HEIGHT = 450;
   private PongPanel panel; 
   
   public Pong() {
@@ -34,22 +37,20 @@ public class Pong extends JFrame {
     new Pong();
   }
 
-}
-
-
 public class PongPanel extends JPanel implements ActionListener, KeyListener {
-  private Pong game;
-  private Ball ball;
-  private Paddle player1, player2;
-  private int width, height;
+		private static final long serialVersionUID = 1L;
+	private Pong game;
+	private Ball ball;
+	private Paddle player1, player2;
+	private int width, height;
   
-  private updateDimensions() {
-    width = game.getWidth;
-    height = game.getHeight;  
+  private void updateDimensions() {
+    width = game.getWidth();
+    height = game.getHeight();  
   }
   
   public PongPanel (Pong game) {
-    setBackground(Color.WHITE);
+    setBackground(Color.BLACK);
     this.game = game;
     updateDimensions();
     
@@ -60,9 +61,9 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
     int maxSpeed = 1;
     
     player1 = new Paddle(1, game, KeyEvent.VK_UP, KeyEvent.VK_DOWN,
-      width * 0.9f, paddleWidth, paddleHeight, maxSpeed);
+      (int) (width * 0.9f), paddleWidth, paddleHeight, maxSpeed);
     player2 = new Paddle(2, game, KeyEvent.VK_W, KeyEvent.VK_S,
-      width * 0.1f, paddleWidht, paddleHeight, maxSpeed);
+      (int) (width * 0.1f), paddleWidth, paddleHeight, maxSpeed);
     
     Timer timer = new Timer(5, this);
     timer.start();
@@ -75,9 +76,16 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
     ball.update();
     player1.update();
     player2.update();
+    
+    if (player1.score == 10)
+    	JOptionPane.showMessageDialog(
+    			null, "Player 1 wins", "Pong", JOptionPane.PLAIN_MESSAGE);
+    else if (player2.score == 10)
+    	JOptionPane.showMessageDialog(
+    			null, "Player 2 wins", "Pong", JOptionPane.PLAIN_MESSAGE);
   }
   
-  public Player getPlayer(int playerNum) {
+  public Paddle getPlayer(int playerNum) {
     if (playerNum == 1) return player1;
     else return player2;
   }
@@ -100,13 +108,13 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
     player1.released(e.getKeyCode());
     player2.released(e.getKeyCode());
   }
-  public void keyTyped(keyEvent e) {
+  public void keyTyped(KeyEvent e) {
   }
   
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
     g.drawString(player2.score + "  :  " + player1.score, 
-      width / 2, height * 0.1f);
+      width / 2, (int) (height * 0.1f));
     ball.paint(g);
     player1.paint(g);
     player2.paint(g);
@@ -129,8 +137,8 @@ public class Ball {
   }
   
   public void resetBall() {
-    x = game.getWidth / 2;
-    y = Math.random() * game.getHeight();
+    x = game.getWidth() / 2;
+    y = (int) (Math.random() * game.getHeight());
   }
   
   public void update() {
@@ -139,16 +147,16 @@ public class Ball {
     y += ySpeed;
   
     if (x < 0) {
-      game.getPanel.increaseScore(1);
+      game.getPanel().increaseScore(1);
       resetBall();
       xSpeed *= -1;
     }
     else if (x > game.getWidth() - size) {
-      game.getPanel.increaseScore(2);
+      game.getPanel().increaseScore(2);
       resetBall();
       xSpeed *= -1;
     }
-    else if (y < 0 || y > game.getHeight - size) {
+    else if (y < 0 || y > game.getHeight() - size) {
       ySpeed *= -1;
     }
     
@@ -168,6 +176,7 @@ public class Ball {
     return new Rectangle(x, y, size, size);
   }
   
+  public void paint(Graphics g) {
     g.fillRect(x, y, size, size);
   }
   
@@ -181,24 +190,55 @@ public class Paddle {
   private int x, y, ySpeed;
   private int maxSpeed;
   
-  public Paddle (Pong game, int up, int down, int x, 
+  public int score = 0;
+  
+  public Paddle (int player, Pong game, int up, int down, int x, 
       int xSize, int ySize, int maxSpeed) {
     this.game = game;
     this.x = x;
-    y = game.getHeight / 2;
+    y = game.getHeight() / 2;
     this.up = up;
     this.down = down;
     this.xSize = xSize;
     this.ySize = ySize;
     this.maxSpeed = maxSpeed;
+    ySpeed = 0;
   }
   
   public void resetPaddle() {
-    y = game.getHeight / 2;
+    y = game.getHeight() / 2;
   }
   
   public void update() {
-    if (y > 0 && )
+    if (y > 0 && y < game.getHeight() - ySize) 
+    	y += ySpeed;
+    else if (y >= 0) y++;
+    else if (y <= game.getHeight()) y--;
   }
   
+  public void pressed(int keyCode) {
+	  if (keyCode == up)
+		  ySpeed = -maxSpeed;
+	  else if (keyCode == down)
+		  ySpeed = maxSpeed;
+  }
+  
+  public void released(int keyCode) {
+	  if (keyCode == up || keyCode == down)
+		  ySpeed = 0;
+  }
+  
+  public Rectangle getBounds() {
+	  return new Rectangle(x, y, xSize, ySize);
+  }
+  
+  public void paint(Graphics g) {
+	  g.fillRect(x, y, xSize, ySize);
+  }
+  
+  public void increaseScore() { score++; }
+  
 }
+
+
+}//end of pong class
