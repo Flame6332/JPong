@@ -2,6 +2,7 @@ package com.jpong.main;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -22,7 +23,7 @@ private final static int WIDTH = 700, HEIGHT = 450;
   public Pong() {
     setSize(WIDTH, HEIGHT);
     setTitle("JPong");
-    setBackground(Color.WHITE);
+    setBackground(Color.BLACK);
     setVisible(true);
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     panel = new PongPanel(this);
@@ -77,12 +78,12 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
     player1.update();
     player2.update();
     
-    if (player1.score == 10)
+    /*if (player1.score == 10)
     	JOptionPane.showMessageDialog(
     			null, "Player 1 wins", "Pong", JOptionPane.PLAIN_MESSAGE);
     else if (player2.score == 10)
     	JOptionPane.showMessageDialog(
-    			null, "Player 2 wins", "Pong", JOptionPane.PLAIN_MESSAGE);
+    			null, "Player 2 wins", "Pong", JOptionPane.PLAIN_MESSAGE);*/
   }
   
   public Paddle getPlayer(int playerNum) {
@@ -113,11 +114,13 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
   
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
+    Graphics2D g2d = (Graphics2D)(g);
+    //g2d.setColor(Color.WHITE);
     g.drawString(player2.score + "  :  " + player1.score, 
       width / 2, (int) (height * 0.1f));
-    ball.paint(g);
-    player1.paint(g);
-    player2.paint(g);
+    ball.paint(g2d);
+    player1.paint(g2d);
+    player2.paint(g2d);
   }
   
 }
@@ -176,7 +179,7 @@ public class Ball {
     return new Rectangle(x, y, size, size);
   }
   
-  public void paint(Graphics g) {
+  public void paint(Graphics2D g) {
     g.fillRect(x, y, size, size);
   }
   
@@ -232,7 +235,7 @@ public class Paddle {
 	  return new Rectangle(x, y, xSize, ySize);
   }
   
-  public void paint(Graphics g) {
+  public void paint(Graphics2D g) {
 	  g.fillRect(x, y, xSize, ySize);
   }
   
