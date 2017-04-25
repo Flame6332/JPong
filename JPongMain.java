@@ -62,7 +62,7 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
     
     int paddleWidth = 10; 
     int paddleHeight = 60;
-    int maxSpeed = 1;
+    int maxSpeed = 2;
     
     player1 = new Paddle(1, game, KeyEvent.VK_UP, KeyEvent.VK_DOWN,
       (int) (width * 0.9f), paddleWidth, paddleHeight, maxSpeed);
@@ -83,7 +83,7 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
   	checkWinner(10);  
   }
   
-	public checkWinner(int goal) {
+	public void checkWinner(int goal) {
 		if (player1.score == 10) {
     	JOptionPane.showMessageDialog(
     			null, "Player 1 wins", "Pong", JOptionPane.PLAIN_MESSAGE);
@@ -96,7 +96,7 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 		}
 	}
 	
-	public resetScore() {
+	public void resetScore() {
 		player1.score = 0;
 		player2.score = 0;
 	}	
@@ -174,16 +174,16 @@ public class Ball {
       resetBall();
       xSpeed *= -1;
     }
-    else if (y < 0 || y > game.getHeight() - size) {
+    else if (isOutVertically()) {
       ySpeed *= -1;
     }
-    
-		private boolean topOrBottom() {
-			return 
-		}
 		
     checkCollision();
     
+  }
+  
+  private boolean isOutVertically() {
+	  return y < 0 || y > game.getHeight() - size - game.YBORDER;
   }
   
   public void checkCollision() {
