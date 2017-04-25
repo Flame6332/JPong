@@ -18,6 +18,7 @@ public class Pong extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 private final static int WIDTH = 700, HEIGHT = 450;
+	public final int XBORDER = 7, YBORDER = 29;
   private PongPanel panel; 
   
   public Pong() {
@@ -38,6 +39,8 @@ private final static int WIDTH = 700, HEIGHT = 450;
     new Pong();
   }
 
+	
+	
 public class PongPanel extends JPanel implements ActionListener, KeyListener {
 		private static final long serialVersionUID = 1L;
 	private Pong game;
@@ -77,15 +80,27 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
     ball.update();
     player1.update();
     player2.update();
-    
-    /*if (player1.score == 10)
-    	JOptionPane.showMessageDialog(
-    			null, "Player 1 wins", "Pong", JOptionPane.PLAIN_MESSAGE);
-    else if (player2.score == 10)
-    	JOptionPane.showMessageDialog(
-    			null, "Player 2 wins", "Pong", JOptionPane.PLAIN_MESSAGE);*/
+  	checkWinner(10);  
   }
   
+	public checkWinner(int goal) {
+		if (player1.score == 10) {
+    	JOptionPane.showMessageDialog(
+    			null, "Player 1 wins", "Pong", JOptionPane.PLAIN_MESSAGE);
+			resetScore();
+		}
+    else if (player2.score == 10) {
+    	JOptionPane.showMessageDialog(
+    			null, "Player 2 wins", "Pong", JOptionPane.PLAIN_MESSAGE);
+			resetScore();
+		}
+	}
+	
+	public resetScore() {
+		player1.score = 0;
+		player2.score = 0;
+	}	
+	
   public Paddle getPlayer(int playerNum) {
     if (playerNum == 1) return player1;
     else return player2;
@@ -154,7 +169,7 @@ public class Ball {
       resetBall();
       xSpeed *= -1;
     }
-    else if (x > game.getWidth() - size) {
+    else if (x > game.getWidth() - size - game.XBORDER) {
       game.getPanel().increaseScore(2);
       resetBall();
       xSpeed *= -1;
@@ -163,6 +178,10 @@ public class Ball {
       ySpeed *= -1;
     }
     
+		private boolean topOrBottom() {
+			return 
+		}
+		
     checkCollision();
     
   }
@@ -213,12 +232,15 @@ public class Paddle {
   }
   
   public void update() {
-    if (y > 0 && y < game.getHeight() - ySize) 
-    	y += ySpeed;
-    else if (y >= 0) y++;
-    else if (y <= game.getHeight()) y--;
+    if (isInBounds()) y += ySpeed;
+    else if (y >= 0) y += ySpeed;
+    else if (y <= game.getHeight()) y -= ySpeed;
   }
-  
+	
+	private boolean isInBounds() {
+		return y > 0 && y < game.getHeight() - ySize - game.YBORDER;
+	}
+	
   public void pressed(int keyCode) {
 	  if (keyCode == up)
 		  ySpeed = -maxSpeed;
