@@ -3,6 +3,7 @@ package com.jpong.main;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.MouseInfo;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -18,17 +19,17 @@ public class Pong extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 private final static int WIDTH = 700, HEIGHT = 450;
-	public final int XBORDER = 7, YBORDER = 29;
+	public final int XBORDER = 8, YBORDER = 30;
   private PongPanel panel; 
   
   public Pong() {
     setSize(WIDTH, HEIGHT);
     setTitle("JPong");
     setBackground(Color.BLACK);
-    setVisible(true);
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     panel = new PongPanel(this);
     add(panel);
+    setVisible(true);
   }
   
   public PongPanel getPanel() {
@@ -54,7 +55,7 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
   }
   
   public PongPanel (Pong game) {
-    setBackground(Color.BLACK);
+    setBackground(Color.WHITE);
     this.game = game;
     updateDimensions();
     
@@ -127,12 +128,23 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
   public void keyTyped(KeyEvent e) {
   }
   
+  public int getMouseX() {
+	  return MouseInfo.getPointerInfo().getLocation().x - game.getLocationOnScreen().x - 8;
+  }
+  public int getMouseY() {
+	  return MouseInfo.getPointerInfo().getLocation().y - game.getLocationOnScreen().y - 29;
+  }
+  
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
     Graphics2D g2d = (Graphics2D)(g);
     //g2d.setColor(Color.WHITE);
     g.drawString(player2.score + "  :  " + player1.score, 
-      width / 2, (int) (height * 0.1f));
+    	width / 2 - 20, (int) (height * 0.1f));
+    g.drawString(width + " - " + height, 
+    	20, (int) (height * 0.1f));
+    g.drawString(getMouseX() + " x " + getMouseY(), 
+    		20, (int) (height * 0.8f));
     ball.paint(g2d);
     player1.paint(g2d);
     player2.paint(g2d);
